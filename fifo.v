@@ -1,10 +1,11 @@
 module FIFO (
-  output reg [7:0] data_out,
+  output [7:0] data_out,
   output full, empty,
   input [7:0] data_in,
   input clock, reset, wn, rn
 );
-  reg [2:0] wptr, rptr;
+  // Choose pointers to be 4 bits wide
+  reg [3:0] wptr, rptr; 
   reg [7:0] memory [7:0];
 
   always @(posedge clock or posedge reset) begin
@@ -12,29 +13,26 @@ module FIFO (
       integer i;
       for (i=0; i < 8; i=i+1)
         memory[i] <= 0;
-      data_out <= 0;
       wptr <= 0;
       rptr <= 0;
     end
     else begin
-      // Write operation
       if (wn && !full) begin
-        memory[wptr] <= data_in;
+        // Use lower 3 bits of wptr
+        memory[wptr[2:0]] <= data_in; 
         wptr <= wptr + 1;
       end
-      // Read operation
       if (rn && !empty) begin
-        data_out <= memory[rptr];
         rptr <= rptr + 1;
       end
     end
   end
 
-  // FIFO full condition - Note: The PDF shows multiple commented-out versions.
-  // This one is the active one in the code.
-  assign full = ((wptr+1'b1) == rptr);
+  // Use lower 3 bits of rptr
+  assign data_out = !empty ? memory[rptr[2:0]] : 8'd0;
 
-  // FIFO empty condition
+  // Full and empty logic for 4-bit pointers
+  assign full = (wptr[2:0] == rptr[2:0]) && (wptr[3] != rptr[3]);
   assign empty = (wptr == rptr);
 
 endmodule
