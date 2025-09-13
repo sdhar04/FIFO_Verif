@@ -22,22 +22,25 @@ class scoreboard extends uvm_scoreboard;
 
   function void write(seq_item req);
     cov_data_pkt = req;
-    fifo_coverage.sample();
+  	fifo_coverage.sample();
 
-    if (req.wn == 1'b1) begin
-        expected_data_queue.push_back(req.data_in);
-    end
+  	if (req.wn == 1'b1 && req.full == 1'b0) begin
+    	expected_data_queue.push_back(req.data_in);
+    	`uvm_info(get_type_name(), $sformatf("SCOREBOARD: Write Accepted. Queueing %d. Queue size: %d", req.data_in, expected_data_queue.size()), UVM_HIGH)
+  	end
 
-    if (req.rn == 1'b1) begin
-        if (expected_data_queue.size() > 0) begin
-            int expected_data = expected_data_queue.pop_front();
-            if (req.data_out == expected_data) begin
-                `uvm_info(get_type_name(), $sformatf("MATCH: DATA_OUT=%d, Expected=%d", req.data_out, expected_data), UVM_LOW);
-            end else begin
-                `uvm_error(get_type_name(), $sformatf("MISMATCH: DATA_OUT=%d, Expected=%d", req.data_out, expected_data));
-            end
-        end
-    end
+  	if (req.rn == 1'b1 && req.empty == 1'b0) begin
+    	if (expected_data_queue.size() > 0) begin
+      		int expected_data = expected_data_queue.pop_front();
+      	if (req.data_out == expected_data) begin
+        	`uvm_info(get_type_name(), $sformatf("MATCH: DATA_OUT=%d, Expected=%d", req.data_out, expected_data), UVM_LOW);
+      	end else begin
+        	`uvm_error(get_type_name(), $sformatf("MISMATCH: DATA_OUT=%d, Expected=%d", req.data_out, expected_data));
+      	end
+    	end else begin
+        	`uvm_error(get_type_name(), "SCOREBOARD: DUT provided data when checker expected none.");
+    	end
+  	end
   endfunction
   
   function void report_phase(uvm_phase phase);
