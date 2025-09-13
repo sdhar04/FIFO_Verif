@@ -1,5 +1,5 @@
 class seq_item extends uvm_sequence_item;
-  rand logic [7:0] data_in;
+  randc logic [7:0] data_in;
   rand bit wn;
   rand bit rn;
   bit empty;
@@ -19,8 +19,8 @@ class seq_item extends uvm_sequence_item;
     `uvm_field_int(data_out, UVM_ALL_ON)
   `uvm_object_utils_end
 
-  constraint C { rn != wn; };
-  constraint D { data_in inside {[0:50]}; };
+//   constraint C { rn != wn; };
+//   constraint D { data_in inside {[0:50]}; };
 
   function string convert2string();
     return $sformatf("\n wn=%0d \n rn=%0d \n FULL=%0d \n EMPTY=%0d \n DATA_IN=%0d", wn, rn, full, empty, data_in);

@@ -1,0 +1,19 @@
+BEGIN 3:fifo_if:fast__1:work
+    wn :  1:fifo_pkg:fast:work
+    empty :  1:fifo_pkg:fast:work
+    data_in :  1:fifo_pkg:fast:work
+    rn :  1:fifo_pkg:fast:work
+    full :  1:fifo_pkg:fast:work
+    data_out :  1:fifo_pkg:fast:work
+    clock :  1:fifo_pkg:fast:work
+END 
+BEGIN 3:fifo_if:fast__2:work
+    data_in :  1:tb_top:fast:work
+    data_out :  1:tb_top:fast:work
+    empty :  1:tb_top:fast:work
+    reset :  1:tb_top:fast:work
+    rn :  1:tb_top:fast:work
+    full :  1:tb_top:fast:work
+    clock :  1:tb_top:fast:work
+    wn :  1:tb_top:fast:work
+END 

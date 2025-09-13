@@ -1,0 +1,14 @@
+2
+16
+tb_top.vif.clock
+tb_top
+74
+2
+vif
+clock
+tb_top.vif.reset
+tb_top
+75
+2
+vif
+reset

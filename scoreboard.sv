@@ -11,7 +11,7 @@ class scoreboard extends uvm_scoreboard;
     READ_CMD: coverpoint cov_data_pkt.rn { bins read_dut[] = {0,1}; }
     EMPTY_CMD: coverpoint cov_data_pkt.empty { bins empty_dut[] = {0,1}; }
     FULL_CMD: coverpoint cov_data_pkt.full { bins full_dut[] = {0,1}; }
-    READXWRITE: cross WRITE_CMD, READ_CMD;
+//     READXWRITE: cross WRITE_CMD, READ_CMD;
   endgroup
 
   function new(string name="scoreboard", uvm_component parent=null);
@@ -21,8 +21,8 @@ class scoreboard extends uvm_scoreboard;
   endfunction
 
   function void write(seq_item req);
-    cov_data_pkt = req;
-  	fifo_coverage.sample();
+   	cov_data_pkt = req;
+   	fifo_coverage.sample();
 
   	if (req.wn == 1'b1 && req.full == 1'b0) begin
     	expected_data_queue.push_back(req.data_in);
