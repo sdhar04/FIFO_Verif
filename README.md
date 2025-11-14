@@ -10,8 +10,30 @@ The **Design Under Test (DUT)** is a synchronous FIFO written in Verilog (`fifo.
 
 ## How to Run
 
-### Easiest Method: EDA Playground
+This entire project is set up and ready to run on EDA Playground. I used Questa and Riviera.
+**[EDA Playground link](https://www.edaplayground.com/x/vbsN)**
 
-This entire project is set up and ready to run on EDA Playground. This is the simplest way to compile, simulate, and see the results without any local setup.
+## Testbench Architecture
 
-**[Run this project on EDA Playground](https://www.edaplayground.com/x/vbsN)**
+The testbench follows a standard UVM architecture.
+
+
+* **`tb_top` (Top-Level Module):**
+    * Defined inside (`testbench.sv`).
+    * Instantiates the DUT (`fifo.v`).
+    * Instantiates the `SystemVerilog interface` (`interface.sv`).
+    * Connects the interface to the DUT.
+    * Calls `run_test()` to start the UVM simulation.
+
+* **UVM Components (separate files included in `fifo_pkg`):**
+    * **`seq_item`**: The transaction item, defining the basic operations (`wr_en`, `rd_en`, `wdata`).
+    * **`base_seq`**: Defines base test sequence.
+    * **`fill_and_empty_seq`**: Defines a test sequence to repeatedly fill and empty the FIFO.
+    * **`alternating_access_seq`**: Defines a test sequence to alternate between reads and writes.
+    * **`driver`**: Drives the `seq_item` transactions to the DUT.
+    * **`monitor`**: Passively observes the interface, collects pin-level activity, and broadcasts transactions to the `scoreboard`.
+    * **`sequencer`**: Defines sequencer class.
+    * **`agent`**: A container that encapsulates the driver, monitor, and sequencer. Functions as only monitor when `UVM_PASSIVE`.
+    * **`scoreboard`**: Contains an internal reference model (queue) to predict behavior and compare it against the DUT's output.
+    * **`env`**: The top-level UVM environment that instantiates the agent and the scoreboard.
+    * **`base_test`**: Builds the environment and starts all sequences parallelly.
